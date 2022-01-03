@@ -2,8 +2,12 @@ function qico()
   local q = {} -- msg queue, just strings for now
   local t = {} -- topics
 
-  function add_event(name)
-    add(q, name)
+  function add_event(name, payload)
+    local tmp = {
+      name = name,
+      payload = payload,
+    }
+    add(q, tmp)
   end
 
   function add_topic(name)
@@ -18,16 +22,15 @@ function qico()
 
   function add_subscriber(name, fn)
     add(t[name], fn)
-
   end
 
   function process_queue()
     for k,v in pairs(q) do
-      printh("PROCEVENT: "..v)
-      if t[v] != nil then
-        printh("FOUNDSUB: "..v)
-        for ik,iv in pairs(t[v]) do
-          iv(v)
+      printh("PROCEVENT: "..v.name)
+      if t[v.name] != nil then
+        printh("FOUNDSUB: "..v.name)
+        for ik,iv in pairs(t[v.name]) do
+          iv(v.name, v.payload)
         end
       end
       q[k] = nil
